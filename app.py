@@ -67,3 +67,7 @@ def handle_message(event):
 # Render環境用サーバ起動（waitress + ポート指定）
 if __name__ == "__main__":
     serve(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+
+@app.route("/", methods=["GET"])
+def index():
+    return "OK", 200
