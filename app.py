@@ -71,3 +71,7 @@ if __name__ == "__main__":
 @app.route("/", methods=["GET"])
 def index():
     return "OK", 200
+
+@app.route("/", methods=["GET"])
+def index():
+    return "OK", 200
