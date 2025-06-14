@@ -39,7 +39,12 @@ def callback():
 
     return "OK"
 
-# ユーザーからメッセージが届いたときの処理
+# 動作確認用のルート
+@app.route("/", methods=["GET"])
+def index():
+    return "OK", 200
+
+# メッセージ受信時の処理
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_message = event.message.text
@@ -47,7 +52,6 @@ def handle_message(event):
     print("User:", user_message)
 
     try:
-        # ChatGPTへ問い合わせ
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": user_message}]
@@ -55,7 +59,6 @@ def handle_message(event):
         reply_text = response.choices[0].message.content
         print("GPT:", reply_text)
 
-        # LINEに返信
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=reply_text)
@@ -64,14 +67,6 @@ def handle_message(event):
         print("=== OpenAI Error ===")
         print(e)
 
-# Render環境用サーバ起動（waitress + ポート指定）
+# Render環境用サーバ起動
 if __name__ == "__main__":
     serve(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
-
-@app.route("/", methods=["GET"])
-def index():
-    return "OK", 200
-
-@app.route("/", methods=["GET"])
-def index():
-    return "OK", 200
