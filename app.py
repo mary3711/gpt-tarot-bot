@@ -1,6 +1,6 @@
 from flask import Flask, request, abort
 import os
-import openai
+from openai import OpenAI
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 from dotenv import load_dotenv
@@ -10,11 +10,13 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# 環境変数からトークン・シークレット・APIキーを取得
+# 環境変数からキーを取得
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
+# OpenAIクライアントを初期化
+client = OpenAI(api_key=openai_api_key)
 
 @app.route("/callback", methods=["POST"])
 def callback():
@@ -22,7 +24,7 @@ def callback():
     body = request.get_data(as_text=True)
 
     print("=== Webhook Received ===")
-    print("Signature:", signature)
+    print("signature:", signature)
     print("Body:", body)
 
     try:
@@ -34,27 +36,28 @@ def callback():
 
     return "OK"
 
-
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_message = event.message.text
     print("User:", user_message)
 
-    gpt_reply = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": user_message}]
-    )
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": user_message}]
+        )
+        reply_text = response.choices[0].message.content
+        print("GPT:", reply_text)
 
-    reply_text = gpt_reply['choices'][0]['message']['content']
-    print("GPT:", reply_text)
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=reply_text)
+        )
+    except Exception as e:
+        print("=== OpenAI Error ===")
+        print(e)
 
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=reply_text)
-    )
-
-
-# Render対応：waitress + ポート指定
+# Render対応（waitress使用、ポート指定）
 if __name__ == "__main__":
     serve(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
 
