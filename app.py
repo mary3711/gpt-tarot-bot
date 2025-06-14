@@ -6,18 +6,21 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 from dotenv import load_dotenv
 from waitress import serve
 
+# 環境変数を読み込み
 load_dotenv()
 
+# Flaskアプリ初期化
 app = Flask(__name__)
 
-# 環境変数からキーを取得
+# 環境変数からLINE Bot・OpenAIのキーを取得
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
-# OpenAIクライアントを初期化
+# OpenAIクライアント初期化（最新版openai>=1.0対応）
 client = OpenAI(api_key=openai_api_key)
 
+# LINEのWebhookエンドポイント
 @app.route("/callback", methods=["POST"])
 def callback():
     signature = request.headers.get("X-Line-Signature", "")
@@ -36,12 +39,15 @@ def callback():
 
     return "OK"
 
+# ユーザーからメッセージが届いたときの処理
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_message = event.message.text
+    print("=== Message Event Triggered ===")
     print("User:", user_message)
 
     try:
+        # ChatGPTへ問い合わせ
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": user_message}]
@@ -49,6 +55,7 @@ def handle_message(event):
         reply_text = response.choices[0].message.content
         print("GPT:", reply_text)
 
+        # LINEに返信
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=reply_text)
@@ -57,7 +64,6 @@ def handle_message(event):
         print("=== OpenAI Error ===")
         print(e)
 
-# Render対応（waitress使用、ポート指定）
+# Render環境用サーバ起動（waitress + ポート指定）
 if __name__ == "__main__":
     serve(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
-
