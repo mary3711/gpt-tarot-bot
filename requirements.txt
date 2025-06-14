@@ -1,6 +1,0 @@
-openai>=1.0.0
-flask
-line-bot-sdk
-python-dotenv
-waitress
-
