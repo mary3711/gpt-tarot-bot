@@ -2,79 +2,91 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>月影のアルカナ</title>
+    <title>星詠みの小部屋</title>
     <style>
         body {
-            background: linear-gradient(to bottom right, #1f1c2c, #928dab);
-            color: #f5f5f5;
-            font-family: 'Hiragino Mincho ProN', serif;
-            padding: 40px;
+            background: radial-gradient(circle, #1e002b, #0a0012);
+            color: #e0d9f4;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 2rem;
             text-align: center;
         }
-        .container {
-            background-color: rgba(255, 255, 255, 0.08);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 700px;
-            margin: auto;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-        }
+
         h1 {
-            font-size: 2em;
-            margin-bottom: 20px;
-            color: #ffe8e8;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+            font-family: 'Georgia', serif;
+            font-size: 2rem;
+            color: #f5eaff;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
         }
-        label, input, button {
-            font-size: 1em;
-            margin-top: 10px;
-            color: #fff;
+
+        form {
+            margin-bottom: 2rem;
         }
+
+        label {
+            font-size: 1.1rem;
+            color: #d9c4f0;
+        }
+
         input[type="text"] {
+            padding: 0.6rem;
+            font-size: 1rem;
             width: 80%;
-            padding: 10px;
-            border-radius: 8px;
+            max-width: 500px;
+            border-radius: 5px;
             border: none;
-            margin-top: 10px;
+            margin-top: 0.5rem;
         }
+
         button {
-            margin-top: 20px;
-            padding: 10px 25px;
+            margin-top: 1rem;
+            padding: 0.5rem 1.5rem;
+            background-color: #6b4ca1;
+            color: #fff;
             border: none;
-            border-radius: 10px;
-            background-color: #6a5acd;
-            color: white;
+            border-radius: 4px;
+            font-size: 1rem;
             cursor: pointer;
-            font-weight: bold;
+            box-shadow: 0 0 10px rgba(255,255,255,0.1);
         }
-        .result {
-            margin-top: 30px;
-            font-size: 1.1em;
-            line-height: 1.7em;
+
+        button:hover {
+            background-color: #8761c9;
+        }
+
+        .card-result {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid #a77bff;
+            border-radius: 10px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            white-space: pre-line;
             text-align: left;
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.08);
-            border-left: 6px solid #dda0dd;
-            border-radius: 8px;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .error {
+            color: #ffaaaa;
+            margin-top: 2rem;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>月影のアルカナ 〜 静寂と導きのタロット 〜</h1>
-        <form method="POST">
-            <label for="question">静かに心を映してみてください。今、知りたいことは何ですか？</label><br>
-            <input type="text" id="question" name="question" required><br>
-            <button type="submit">タロットをめくる</button>
-        </form>
+    <h1>星詠みの小部屋 🔮</h1>
 
-        {% if reply %}
-        <div class="result">
-            <strong>星のささやき：</strong><br><br>
-            {{ reply|safe }}
-        </div>
-        {% endif %}
-    </div>
+    <form method="POST">
+        <label for="question">あなたの想いを教えてください：</label><br>
+        <input type="text" name="question" id="question" required><br>
+        <button type="submit">占う</button>
+    </form>
+
+    {% if reply %}
+        {{ reply|safe }}
+    {% endif %}
 </body>
 </html>
