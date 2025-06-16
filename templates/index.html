@@ -15,8 +15,7 @@
 
   {% if reply %}
     <h2>結果：</h2>
-    <div style="white-space: pre-line; line-height: 1.6;">{{ reply }}</div>
+    <div>{{ reply|safe }}</div>
   {% endif %}
 </body>
 </html>
-
