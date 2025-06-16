@@ -15,9 +15,10 @@ def index():
             question = request.form.get("question")
             response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "user", "content": question}
-                ]
+messages=[
+    {"role": "system", "content": "あなたは優しくて神秘的なタロット占い師です。質問者に寄り添い、前向きで意味のある占い結果を伝えてください。"},
+    {"role": "user", "content": question}
+]
             )
             reply = response.choices[0].message.content
         except Exception as e:
