@@ -41,7 +41,6 @@ def index():
                     "content": question
                 }
             ]
-
             response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=messages
