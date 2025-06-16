@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 
 # OpenAIのAPIキーを設定
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -13,7 +13,7 @@ def index():
     if request.method == "POST":
         try:
             question = request.form.get("question")
-            response = openai.ChatCompletion.create(
+            response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "user", "content": question}
@@ -22,7 +22,7 @@ def index():
             reply = response.choices[0].message.content
         except Exception as e:
             reply = f"⚠️ エラーが発生しました：{str(e)}"
-            print(f"⚠️ Flaskログ：{str(e)}")  # Renderのログに出す
+            print(f"⚠️ Flaskログ：{str(e)}")
     return render_template("index.html", reply=reply)
 
 if __name__ == "__main__":
