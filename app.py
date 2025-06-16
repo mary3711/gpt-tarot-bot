@@ -14,7 +14,6 @@ def index():
         try:
             question = request.form.get("question")
             messages = [
-          {
   "role": "system",
   "content": (
     "あなたはプロフェッショナルなタロット占い師です。"
