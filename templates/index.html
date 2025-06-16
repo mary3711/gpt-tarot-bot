@@ -1,21 +1,86 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GPTタロットボット</title>
+  <style>
+    body {
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+      max-width: 720px;
+      margin: 2em auto;
+      padding: 1em;
+      line-height: 1.8;
+      font-size: 16px;
+      color: #222;
+      background: #fff;
+    }
+
+    h1 {
+      font-size: 1.5em;
+      margin-bottom: 1em;
+    }
+
+    form {
+      margin-bottom: 2em;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5em;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.6em;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 0.5em 1em;
+      font-size: 1em;
+      margin-top: 1em;
+      cursor: pointer;
+    }
+
+    h2 {
+      margin-top: 2em;
+      font-size: 1.2em;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.3em;
+    }
+
+    .result {
+      white-space: pre-wrap;
+      margin-top: 1em;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1em 1em;
+        font-size: 15px;
+      }
+
+      h1 {
+        font-size: 1.3em;
+      }
+    }
+  </style>
 </head>
 <body>
   <h1>GPTタロットへようこそ</h1>
 
   <form method="POST">
-    <label for="question">占いたい内容を入力してください：</label><br>
-    <input type="text" name="question" id="question" required><br><br>
+    <label for="question">占いたい内容を入力してください：</label>
+    <input type="text" name="question" id="question" required>
+    <br>
     <button type="submit">占う</button>
   </form>
 
   {% if reply %}
     <h2>結果：</h2>
-    <div>{{ reply|safe }}</div>
+    <div class="result">{{ reply|safe }}</div>
   {% endif %}
 </body>
 </html>
