@@ -1,92 +1,110 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>星詠みの小部屋</title>
-    <style>
-        body {
-            background: radial-gradient(circle, #1e002b, #0a0012);
-            color: #e0d9f4;
-            font-family: 'Segoe UI', sans-serif;
-            padding: 2rem;
-            text-align: center;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>星詠みの小部屋 🔮</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 2rem 1rem;
+      font-family: 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background-color: #1a0e2a;
+      color: #f2eaff;
+      text-align: center;
+    }
 
-        h1 {
-            font-family: 'Georgia', serif;
-            font-size: 2rem;
-            color: #f5eaff;
-            margin-bottom: 1rem;
-            letter-spacing: 2px;
-        }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #e2d2ff;
+    }
 
-        form {
-            margin-bottom: 2rem;
-        }
+    label {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
 
-        label {
-            font-size: 1.1rem;
-            color: #d9c4f0;
-        }
+    input[type="text"] {
+      width: 60%;
+      padding: 0.7rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      max-width: 500px;
+    }
 
-        input[type="text"] {
-            padding: 0.6rem;
-            font-size: 1rem;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 5px;
-            border: none;
-            margin-top: 0.5rem;
-        }
+    button {
+      margin-top: 1rem;
+      padding: 0.6rem 1.5rem;
+      font-size: 1rem;
+      background-color: #8a6fc7;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-        button {
-            margin-top: 1rem;
-            padding: 0.5rem 1.5rem;
-            background-color: #6b4ca1;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(255,255,255,0.1);
-        }
+    button:hover {
+      background-color: #a78bfa;
+    }
 
-        button:hover {
-            background-color: #8761c9;
-        }
+    .result-label {
+      font-size: 0.9rem;
+      margin-top: 2rem;
+      color: #ccc;
+    }
 
-        .card-result {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid #a77bff;
-            border-radius: 10px;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            white-space: pre-line;
-            text-align: left;
-            font-size: 1.05rem;
-            line-height: 1.8;
-        }
+    .card-result {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      max-width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-        .error {
-            color: #ffaaaa;
-            margin-top: 2rem;
-        }
-    </style>
+    /* スマホ対応 */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        font-size: 1rem;
+      }
+
+      button {
+        font-size: 1rem;
+        padding: 0.5rem 1.2rem;
+      }
+
+      .card-result {
+        font-size: 1rem;
+        line-height: 1.7;
+        padding: 0.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>星詠みの小部屋 🔮</h1>
+  <h1>星詠みの小部屋 🔮</h1>
 
-    <form method="POST">
-        <label for="question">あなたの想いを教えてください：</label><br>
-        <input type="text" name="question" id="question" required><br>
-        <button type="submit">占う</button>
-    </form>
+  <form method="POST">
+    <label for="question">あなたの想いを教えてください：</label>
+    <input type="text" id="question" name="question" required />
+    <br />
+    <button type="submit">占う</button>
+  </form>
 
-    {% if reply %}
-        {{ reply|safe }}
-    {% endif %}
+  {% if reply %}
+    <div class="result-label">🪐 受け取ったメッセージ</div>
+    <div class="card-result">
+      {{ reply|safe }}
+    </div>
+  {% endif %}
 </body>
 </html>
