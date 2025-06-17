@@ -1,4 +1,3 @@
-# app.py（Flaskアプリ）
 from flask import Flask, request, render_template
 from openai import OpenAI
 import os
@@ -7,8 +6,8 @@ import random
 app = Flask(__name__)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# タロットカードと向き
-tarot_cards = [
+# カード一覧
+major_arcana = [
     "愚者", "魔術師", "女教皇", "女帝", "皇帝", "法王", "恋人", "戦車", "力",
     "隠者", "運命の輪", "正義", "吊るされた男", "死神", "節制", "悪魔", "塔", "星",
     "月", "太陽", "審判", "世界"
@@ -18,55 +17,63 @@ positions = ["正位置", "逆位置"]
 @app.route("/", methods=["GET", "POST"])
 def index():
     reply = ""
+    card_image = ""
     card = ""
     position = ""
-    card_image = ""
 
     if request.method == "POST":
-        question = request.form.get("question")
-        card = random.choice(tarot_cards)
-        position = random.choice(positions)
-        card_image = f"/static/cards/{card}_{position}.png"
+        try:
+            question = request.form.get("question")
+            selected_card = random.choice(major_arcana)
+            selected_position = random.choice(positions)
+            card = selected_card
+            position = selected_position
 
-        system_prompt = f"""
-あなたは、恋愛や心の揺れに寄り添うプロフェッショナルな女性のタロット占い師です。
-言葉は丁寧で温かく、相談者の気持ちを大切にしながらも、芯のある語りで導いてください。
+            system_prompt = f"""
+あなたは、恋愛や心の悩みに寄り添う、落ち着きと芯のある語り口をもつプロフェッショナルなタロット占い師です。
 
-※「〜な気がします」「〜かもしれません」「〜と見ることもできます」
-「〜を教えてくれています」「〜を表しています」「〜という傾向があります」などの
-あいまい・他人任せな表現は使わないでください。
+今から、相談者の悩みに対して「1枚引き」のタロットリーディングを行ってください。
 
-今回の相談内容とカードは以下のとおりです：
-■ カード名：{card} ／ {position}
-■ 相談内容：{question}
+【カード】
+■ カード名：{selected_card} ／ {selected_position}
 
-🔮 あなたの役割：
-カードの意味と相談内容をしっかり結びつけて、相談者の心に届く言葉で伝えてください。
-語尾は「〜です」「〜でしょう」「〜となるでしょう」など、信頼感を与える語り口で。
+あなたの言葉は、迷いの中にいる人の心の支えになります。
+カードの意味と相談者の心をしっかり結びつけて、前向きな気づきを届けてください。
 
-💬 回答スタイルのポイント：
-・最初に相談者の気持ちを静かに受け止めてください。
-・カードの意味は相談内容に合わせて自然な言葉で言い換え、わかりやすく伝えてください。
-・カードが否定的な意味を持つ場合、「やめた方が良いでしょう」「距離を取るのが賢明です」など、はっきり伝えてください。
-・ただし、否定的で終わらず、「その上でどうすればよいか」「希望の見出し方」までやさしく添えてください。
-・“占い師としての視点”で、経験や気づきを含めながら語ってください。
-・文は適度に改行し、読みやすく整えてください（記号や番号は使わないでください）。
+🔮 あなたの役割は、以下の構成に沿って丁寧に語りましょう。
 
-あなたの語りは、迷いの中にいる誰かの支えになります。
-優しく、でも誠実に。寄り添いながらも、芯のある言葉で導いてください。
-        """
+【構成】
+1. 導入：相談内容に合わせて、そっと寄り添うようなやさしい一言から始めてください。
+2. カードの意味を踏まえ、今の状況や気持ちを整理するように説明してください。
+3. カードが示すヒントや注意点があれば、やわらかく、でも曖昧にせず伝えてください。
+4. 最後は、相談者が前を向けるような、あたたかくやさしい希望の言葉でまとめてください。
 
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": question}
-            ]
-        )
+💬 表現ルール：
+・「〜のようです」「〜かもしれません」「〜と見ることもできます」「〜を表しています」など曖昧または型通りの表現は使わず、占い師としての視点で丁寧に自然な語り口で伝えてください。
+・カードの絵柄や装飾の描写は不要です。
+・否定的なカードが出た場合は、「今はおすすめできません」「立ち止まるときかもしれません」などのようにやわらかく、しかし結果を濁さず伝えてください。
+・「自分を磨くといい」など一般的な助言ではなく、相談内容に合ったヒントを出してください。
+・感情に寄り添いながらも、占い師としての深い洞察を感じさせる一歩踏み込んだ言葉を選んでください。
+・文章は読みやすいように、適度に段落や改行を使ってください。
 
-        reply = response.choices[0].message.content.strip()
+あなたの言葉が、そっと心に灯をともす存在になりますように。
+"""
 
-    return render_template("index.html", reply=reply, card=card, position=position, card_image=card_image)
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": f"相談内容: {question}"}
+                ]
+            )
+
+            reply = response.choices[0].message.content.strip()
+            card_image = f"/static/cards/{selected_card}_{'upright' if selected_position == '正位置' else 'reversed'}.png"
+
+        except Exception as e:
+            reply = f"\u26a0\ufe0f エラーが発生しました：{str(e)}"
+
+    return render_template("index.html", reply=reply, card_image=card_image, card=card, position=position)
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=10000)
+    app.run(debug=True, port=10000)
