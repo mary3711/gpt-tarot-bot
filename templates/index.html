@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
@@ -62,29 +62,4 @@
 </head>
 <body>
   <h1>星詠みの小部屋 🔮</h1>
-  <form method="POST" onsubmit="showOverlay()">
-    <p>あなたの想いを教えてください：</p>
-    <input type="text" name="question" required>
-    <br>
-    <button type="submit">占う</button>
-  </form>
-
-  <div class="overlay" id="loadingOverlay">🔮 鑑定中です…しばらくお待ちください</div>
-
-  {% if reply %}
-    {% if card_image %}
-      <div>
-        <img src="{{ card_image }}" alt="カード画像" class="card-image">
-      </div>
-    {% endif %}
-    <h2>{{ card }}（{{ position }}）</h2>
-    <div class="result-text">{{ reply }}</div>
-  {% endif %}
-
-  <script>
-    function showOverlay() {
-      document.getElementById('loadingOverlay').style.display = 'flex';
-    }
-  </script>
-</body>
-</html>
+  <form method="POST" onsubmit="r
