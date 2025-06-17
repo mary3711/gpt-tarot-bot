@@ -68,7 +68,7 @@ def index():
             )
 
             reply = response.choices[0].message.content.strip()
-            card_image = f"/static/cards/{selected_card}_{'upright' if selected_position == '正位置' else 'reversed'}.png"
+            card_image = f"/static/cards/{selected_card}_{selected_position}.png"
 
         except Exception as e:
             reply = f"\u26a0\ufe0f エラーが発生しました：{str(e)}"
