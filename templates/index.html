@@ -12,6 +12,7 @@
       padding: 2em;
       text-align: center;
     }
+
     input[type="text"] {
       padding: 1em;
       width: 80%;
@@ -20,7 +21,9 @@
       border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 1em;
+      display: block;
     }
+
     button {
       padding: 0.8em 2em;
       background-color: #6f42c1;
@@ -28,15 +31,15 @@
       border: none;
       border-radius: 8px;
       font-size: 1em;
-      margin: 1em;
       cursor: pointer;
     }
+
     .card-image {
       margin: 2em 0;
-      max-width: 300px;
-      width: 90%;
+      max-width: 100%;
       height: auto;
     }
+
     .result-text {
       max-width: 90%;
       margin: 2em auto;
@@ -44,8 +47,9 @@
       line-height: 1.8;
       white-space: pre-wrap;
     }
+
     .overlay {
-      display: none;
+      display: none !important;  /* ← 修正ポイント */
       position: fixed;
       top: 0;
       left: 0;
@@ -54,7 +58,6 @@
       background-color: rgba(0, 0, 0, 0.85);
       color: #fff;
       font-size: 1.5em;
-      display: flex;
       justify-content: center;
       align-items: center;
       z-index: 1000;
@@ -63,7 +66,6 @@
 </head>
 <body>
   <h1>星詠みの小部屋 🔮</h1>
-
   <form method="POST" onsubmit="showOverlay()">
     <p>あなたの想いを教えてください：</p>
     <input type="text" name="question" required>
@@ -74,12 +76,12 @@
   <div class="overlay" id="loadingOverlay">🔮 鑑定中です…しばらくお待ちください</div>
 
   {% if reply %}
-    <h2>{{ card }}（{{ position }}）</h2>
     {% if card_image %}
       <div>
         <img src="{{ card_image }}" alt="カード画像" class="card-image">
       </div>
     {% endif %}
+    <h2>{{ card }}（{{ position }}）</h2>
     <div class="result-text">{{ reply }}</div>
   {% endif %}
 
