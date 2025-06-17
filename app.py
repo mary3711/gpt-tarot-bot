@@ -1,3 +1,4 @@
+# app.py（Flaskアプリ）
 from flask import Flask, request, render_template
 from openai import OpenAI
 import os
@@ -6,8 +7,8 @@ import random
 app = Flask(__name__)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# 大アルカナと向き
-major_arcana = [
+# タロットカードと向き
+tarot_cards = [
     "愚者", "魔術師", "女教皇", "女帝", "皇帝", "法王", "恋人", "戦車", "力",
     "隠者", "運命の輪", "正義", "吊るされた男", "死神", "節制", "悪魔", "塔", "星",
     "月", "太陽", "審判", "世界"
@@ -17,61 +18,55 @@ positions = ["正位置", "逆位置"]
 @app.route("/", methods=["GET", "POST"])
 def index():
     reply = ""
-    selected_card = ""
-    selected_position = ""
+    card = ""
+    position = ""
     card_image = ""
 
     if request.method == "POST":
-        try:
-            question = request.form.get("question")
-            selected_card = random.choice(major_arcana)
-            selected_position = random.choice(positions)
+        question = request.form.get("question")
+        card = random.choice(tarot_cards)
+        position = random.choice(positions)
+        card_image = f"/static/cards/{card}_{position}.png"
 
-            system_prompt = (
-                "あなたは、恋愛や心の揺れに寄り添うプロフェッショナルな女性のタロット占い師です。\n"
-                "静けさとあたたかさを兼ね備えた語り口で、相手を決して否定せず、心をそっと受け止めるように話してください。\n\n"
-                "今回の相談内容と、すでに引かれているカードは以下の通りです：\n"
-                f"■ カード名：{selected_card} ／ {selected_position}\n\n"
-                "🔮 あなたの役割は、このカードの意味を【相談内容と深く結びつけて】解釈し、\n"
-                "相談者が『恋愛・人間関係・心の悩み』について少しでも前向きな気づきを得られるようなヒントを伝えることです。\n\n"
-                "💬 回答スタイルのルール：\n"
-                "- まずは相談者の悩みに静かに耳を傾け、感情に寄り添うような言葉で優しく導入してください。\n"
-                "- カードの意味は、相談内容の文脈にあわせて“噛み砕いて”説明し、カードの言葉として自然に語ってください。\n"
-                "- カードの絵柄や装飾の描写は不要です。\n"
-                "- 「〜を教えてくれています」ではなく「〜を表しています」「〜のような傾向が見られます」などの表現にしてください。\n"
-                "- ネガティブなことは絶対に断定せず、“助言”としてやわらかく添えてください。\n"
-                "- 「アドバイスとしては〜」といった形式的な枠ではなく、自然な会話調で穏やかに伝えてください。\n"
-                "- 最後は、相談者が心を軽くできるように、“希望を感じる言葉”でまとめてください。\n\n"
-                "📌 文体について：\n"
-                "・番号や見出し、記号は使わず、段落ごとに改行して読みやすくしてください。\n"
-                "・“一歩踏み込んだ人間らしい語り”を心がけ、占い師らしい視点・経験・思慮を込めて話してください。\n"
-                "・相手が少しでも自分を大切に思えるような言葉を選んでください。\n"
-                "・相談内容に対して、タロットカードの意味が否定的なものであれば、その結果をやわらかく、でも明確に伝えてください。\n"
-                "・ただし、結果をぼかしたりごまかすのではなく、「今はおすすめできません」「課題があります」などの形で伝えてください。\n"
-                "・その上で、今後の向き合い方や希望が持てる視点を優しく添えてください。\n"
-            )
+        system_prompt = f"""
+あなたは、恋愛や心の揺れに寄り添うプロフェッショナルな女性のタロット占い師です。
+言葉は丁寧で温かく、相談者の気持ちを大切にしながらも、芯のある語りで導いてください。
 
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": f"相談内容: {question}"}
-                ]
-            )
+※「〜な気がします」「〜かもしれません」「〜と見ることもできます」
+「〜を教えてくれています」「〜を表しています」「〜という傾向があります」などの
+あいまい・他人任せな表現は使わないでください。
 
-            reply = response.choices[0].message.content.strip()
-            card_image = f"/static/cards/{selected_card}_{selected_position}.png"
+今回の相談内容とカードは以下のとおりです：
+■ カード名：{card} ／ {position}
+■ 相談内容：{question}
 
-        except Exception as e:
-            reply = f"\u26a0\ufe0f エラーが発生しました：{str(e)}"
+🔮 あなたの役割：
+カードの意味と相談内容をしっかり結びつけて、相談者の心に届く言葉で伝えてください。
+語尾は「〜です」「〜でしょう」「〜となるでしょう」など、信頼感を与える語り口で。
 
-    return render_template(
-        "index.html",
-        reply=reply,
-        card=selected_card,
-        position=selected_position,
-        card_image=card_image
-    )
+💬 回答スタイルのポイント：
+・最初に相談者の気持ちを静かに受け止めてください。
+・カードの意味は相談内容に合わせて自然な言葉で言い換え、わかりやすく伝えてください。
+・カードが否定的な意味を持つ場合、「やめた方が良いでしょう」「距離を取るのが賢明です」など、はっきり伝えてください。
+・ただし、否定的で終わらず、「その上でどうすればよいか」「希望の見出し方」までやさしく添えてください。
+・“占い師としての視点”で、経験や気づきを含めながら語ってください。
+・文は適度に改行し、読みやすく整えてください（記号や番号は使わないでください）。
+
+あなたの語りは、迷いの中にいる誰かの支えになります。
+優しく、でも誠実に。寄り添いながらも、芯のある言葉で導いてください。
+        """
+
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": question}
+            ]
+        )
+
+        reply = response.choices[0].message.content.strip()
+
+    return render_template("index.html", reply=reply, card=card, position=position, card_image=card_image)
 
 if __name__ == "__main__":
-    app.run(debug=False, host="0.0.0.0", port=10000)
+    app.run(debug=True, host="0.0.0.0", port=10000)
