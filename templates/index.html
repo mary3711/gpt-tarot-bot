@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>星詠みの小部屋 🔮</title>
+  <title>AIタロット占い 🔮</title>
   <style>
     body {
       background-color: #ffffff;
@@ -65,15 +65,15 @@
   </style>
 </head>
 <body>
-  <h1>星詠みの小部屋 🔮</h1>
+  <h1>AIタロット占い🔮</h1>
   <form method="POST" onsubmit="showOverlay()">
-    <p>あなたの想いを教えてください：</p>
+    <p>占いたい内容を入力してください</p>
     <input type="text" name="question" required>
     <br>
     <button type="submit">占う</button>
   </form>
 
-  <div class="overlay" id="loadingOverlay">🔮 鑑定中です…しばらくお待ちください</div>
+  <div class="overlay" id="loadingOverlay">🔮 鑑定中です…</div>
 
   {% if reply %}
     {% if card_image %}
